@@ -1,1 +1,8 @@
+# Third-party tools
 /glslViewer/
+
+# Build directories
+build/
+
+# Archives
+*.zip
