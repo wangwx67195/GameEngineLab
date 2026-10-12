@@ -113,7 +113,7 @@ GameEngineLab/
 
 - 仓库根目录：`~/projects/GameEngineLab`；**只提交自己的学习代码、笔记、配置**，排除 `glslViewer/`、`build/`、编译输出、缓存、自动生成资源和大文件。
 - 用户已学习 `git init`、`.gitignore`、`git add`、`git commit`、`git push`、`git clone`、`git pull --ff-only` 的基本概念。**不等于每步已验证执行成功**。
-- 跨设备流程：开始前先 `git status`，无待处理改动时再 `git pull --ff-only`；完成课题后 Review → `git add <specific-path>` → `git diff --cached` → `git commit -m "Lesson NN: ..."` → 经用户同意 `git push`。
+- 跨设备流程：章节验收 → Agent 自动更新进度和必要的相关文档 → 用户将本章代码、进度和变更的教学规则一起 `git add <specific-path>` → `git diff --cached` → `git commit` → `git push`。另一台设备先 `git status`，工作区干净时由用户操作或明确授权后 `git pull --ff-only`；同步完成后重新读取进度并核验代码，再继续学习。有本地改动或无法快进时保留成果，不擅自覆盖、暂存或重置；本流程不自动授权 Agent 执行 Git 提交、push 或 pull。
 - Agent 绝不擅自 `git reset --hard`、`git clean -fd`、`git push --force`、`rm -rf`、批量移动目录。
 - 每节可写 `README.md` 或 `notes.md`：学到的术语、原理、自己的错误、结果截图路径、变式练习。
 
@@ -411,7 +411,7 @@ lessons/09_functions/                # 规划中；是否存在以当前文件�
 
 ## 12. 每节课的标准组织方式（适用于所有后续课程）
 
-1. **开始之前**：读取 `LEARNING_PROGRESS.md`；确认上一节是否完成、有无未解决 Bug；用户要求暂停则不催促。
+1. **开始之前**：每次开始或继续章节学习前，重新读取 `LEARNING_PROGRESS.md`，核对最近通过章节、未完成任务和下一节，并简短说明学习位置；跨设备同步后必须重读。结合实际文件与用户最新说明确认进度，不能仅凭聊天记忆；用户要求暂停则不催促。
 2. **Review**：如果用户上传代码，先阅读真实文件（不是根据文件名猜）；必要时编译/运行并明确告知执行条件。对正确处给证据，对错误处逐条解释。
 3. **回顾/衔接**：用 2～5 句复习上节概念，说明新知识在引擎中的作用。
 4. **本节目标**：列出不超过 3 个主要可验证目标；不要同时引入十个全新 API。
@@ -420,7 +420,7 @@ lessons/09_functions/                # 规划中；是否存在以当前文件�
 7. **动手实验**：基础任务一到三个，每个只提供关键片段/函数签名/提示；核心逻辑由学习者手写。
 8. **思考题**：通常 2～4 道，含 1 道变式/边界测试题；不要先透露完整答案。
 9. **总结**：解释本节与上一节的关系；说明以后在引擎哪个模块会用到。
-10. **归档**：通过 Review 后建议一条 Git commit（由用户决定是否执行）；记录到 `LEARNING_PROGRESS.md`。
+10. **归档**：完成代码 Review 或课程验收后自动更新 `LEARNING_PROGRESS.md`，无需再次确认（用户已于 2026-10-12 授权）；同步状态与任务清单，追加已学内容、实际测试依据、遗留问题和下一步，保留历史。通过后建议一条 Git commit，由用户自行决定是否执行。
 
 ### 12.1 Code Review 标准
 
@@ -467,10 +467,11 @@ lessons/09_functions/                # 规划中；是否存在以当前文件�
 
 - 每 3～4 节短复习：随机选一项旧知识组合小题（例如 C++ 函数 + GLSL `u_time`）。
 - 每阶段一个 mini-project，不以工程体量衡量，重点检查能否独立实现与口头解释。
-- 记录在 `LEARNING_PROGRESS.md`，优先由学生提交学习日志，Agent 提供摘要供其确认。
+- Agent 在代码 Review 或课程验收完成后自动记录到 `LEARNING_PROGRESS.md`，学生可随时补充或纠正。仅记录已证实的进度，部分练习通过不等于整课通过；此授权不包含修改练习源码或自动 commit/push。
 
 ### 13.4 Agent 会话切换时必须做的事
 
+- 每次开始或继续章节学习都要核对进度，不限于新会话。跨设备先检查 Git 状态，按 2.3 节同步后重新读取文档；未实际同步时明确仅依据本地记录。
 - 首先读三个文件：根目录 `AGENTS.md`、`docs/LEARNING_PROGRESS.md`、`docs/LEARNING_PLAN.md`，若专注教学再读 `game-engine-tutor/SKILL.md`。
 - 先看 Git 工作树与课程目录，确定进度是不是已比文档更新；**文件与用户的最新口述优先**，不要覆盖现有源码。
 - 首条回复应简短指出：当前掌握、未完成、准备继续哪课；**不必重新讲 01–08 所有知识**。
@@ -479,7 +480,9 @@ lessons/09_functions/                # 规划中；是否存在以当前文件�
 
 ---
 
-## 14. 下一次继续上课的入口（当前：Lesson 09）
+## 14. 下一次继续上课的入口（当前：Lesson 10，未开始）
+
+2026-10-12 更新：Lesson 09 三个练习及值传递小测已通过；下一步学习 Lesson 10。下方保留 2026-10-10 的 Lesson 09 交接内容作为历史参考，当前状态以 `LEARNING_PROGRESS.md` 为准。
 
 **建议下一位 Agent 首次回应的思路**：
 
