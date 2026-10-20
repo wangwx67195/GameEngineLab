@@ -16,8 +16,6 @@ int main() {
     printValue(b);
 
 
-
-
     return 0;
 }
 
