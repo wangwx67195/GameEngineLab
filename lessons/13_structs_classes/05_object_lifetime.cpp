@@ -10,7 +10,7 @@ class LifetimeProbe {
             cout << "construct " << id_ << '\n';
         }
         ~LifetimeProbe() {
-            cout << "destory " << id_ << '\n';
+            cout << "destroy " << id_ << '\n';
         }
 
         void ping() const {
