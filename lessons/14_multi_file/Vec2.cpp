@@ -2,6 +2,10 @@
 #include <iostream>
 using std::cout;
 
+int probe() {
+    return 1;
+}
+
 void translate(Vec2& position, double dx, double dy) {
     position.x += dx;
     position.y += dy;

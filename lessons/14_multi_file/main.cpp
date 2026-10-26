@@ -1,7 +1,8 @@
 #include "Vec2.hpp"
+#include "Vec2.hpp"
 #include <iostream>
 #include <cstdio>
-// using std::cout;
+using std::cout;
 // cout will be used in main.cpp
 
 // void translate(Vec2& position, double dx, double dy);
@@ -11,6 +12,9 @@
 int main() {
     Vec2 default_position;
     printPosition(default_position);
+
+    int probe_1 = probe();
+    cout << "probe = " << probe_1 << '\n';
 
     Vec2 position{2.0, -1.0};
     printPosition(position);
