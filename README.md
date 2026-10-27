@@ -28,10 +28,8 @@ GameEngineLab/
 │   ├── 01_hello_shader/
 │   ├── ...                       # 已有课程，保留原编号与代码
 │   └── 14_multi_file/
-│       ├── Vec2.hpp               # 已通过小节的代码保留
-│       ├── Vec2.cpp
-│       ├── main.cpp
-│       └── 03_member_split/       # 已布置，由学生自行创建
+│       ├── 01_02_multi_file/      # 学生整理的前两小节三文件
+│       └── 03_member_split/      # 成员函数拆分练习
 ├── assets/                       # 后续需要时创建，仅放小型自制/许可明确素材
 ├── build/                        # 编译生成，不提交
 └── glslViewer/                   # 若本地有此第三方目录，不提交
