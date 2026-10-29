@@ -16,3 +16,5 @@ void Vec2::translate(double dx, double dy) {
 double Vec2::lengthSquared() const {
     return x*x + y*y;
 }
+
+// code comment 
