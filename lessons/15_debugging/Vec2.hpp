@@ -13,4 +13,6 @@ struct Vec2 {
     double lengthSquared() const;
 };
 
+bool nearlyEqual();
+
 // #endif

@@ -8,8 +8,8 @@ int probe() {
 
 void Vec2::translate(double dx, double dy) {
     x += dx;
-    y += dy;
-    // y = dy;
+    // y += dy;
+    y = dy;
 
     return;
 }
