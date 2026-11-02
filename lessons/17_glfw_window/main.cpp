@@ -1,11 +1,21 @@
 #include <GL/glew.h> 
 #include <GLFW/glfw3.h> 
 #include <iostream>
+using std::cout;
 
 void onError(int code, const char* description) {
-    std::cerr << "GLFW Error" << code << ": " << description << '\n';
+    std::cerr << "GLFW Error " << code << ": " << description << '\n';
 }
 // char* 指向对应字符串的第一个字符的地址
+
+// void onFramebufferSize()
+void onFramebufferSize(GLFWwindow*, int width, int height) {
+    glViewport(0, 0, width, height);
+
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    cout << viewport[2] << "x" << viewport[3] << '\n';
+}
 
 int main() {
     glfwSetErrorCallback(onError);
@@ -28,6 +38,7 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
 
     glewExperimental = GL_TRUE;
     GLenum result = glewInit();
@@ -38,10 +49,20 @@ int main() {
         return 1;
     }
 
+    const GLubyte* version = glGetString(GL_VERSION);
+    cout << version << '\n';
+
+    int width = 0;
+    int height = 0;
+    glfwGetFramebufferSize(window, &width, &height);
+    callback(window, width, height);
+    glfwSetFramebufferSizeCallback(window, onFramebufferSize);
+
     glClearColor(0.50f, 0.18f, 0.25f, 1.0f);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwSetWindowShouldClose(window, GLFW_TRUE);
         }
