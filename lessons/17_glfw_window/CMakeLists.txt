@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.16)
+project(MyOpenGL)
+
+set(CMAKE_CXX_STANDARD 17)
+
+find_package(glfw3 REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(OpenGL REQUIRED)
+
+add_executable(main main.cpp)
+
+target_link_libraries(main PRIVATE glfw GLEW::GLEW OpenGL::GL)
