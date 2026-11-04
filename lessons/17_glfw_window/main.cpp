@@ -20,6 +20,11 @@ void onFramebufferSize(GLFWwindow*, int width, int height) {
 int main() {
     glfwSetErrorCallback(onError);
 
+#if GLFW_VERSION_MAJOR > 3 || (GLFW_VERSION_MAJOR ==3 && GLFW_VERSION_MINOR >=4)
+    //强制 GLFW 使用 X11 后端
+    glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+#endif
+
     int success = glfwInit();
     if (success == GLFW_FALSE) {
         std::cerr << "Failed to initialize GLFW\n";
@@ -55,7 +60,7 @@ int main() {
     int width = 0;
     int height = 0;
     glfwGetFramebufferSize(window, &width, &height);
-    callback(window, width, height);
+    onFramebufferSize(window, width, height);
     glfwSetFramebufferSizeCallback(window, onFramebufferSize);
 
     glClearColor(0.50f, 0.18f, 0.25f, 1.0f);
