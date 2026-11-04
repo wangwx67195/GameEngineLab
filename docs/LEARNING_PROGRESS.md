@@ -1,14 +1,14 @@
 # GameEngineLab 学习进度与交接日志
 
-> 最后整理：2026-10-31；此文件应随着课程持续更新。
+> 最后整理：2026-11-04；此文件应随着课程持续更新。
 > **状态约定**：`通过` / `已讲解` / `练习中` / `待Review` / `需复习` / `未开始`。  
 > 若实际仓库文件或用户最新说明与此表矛盾，以最新事实为准并更新。**严禁根据旧记忆冒充新进度**。
 
 ## 1. 当前状态
 
-- **最近完成：Lesson16 — 多个物体的二维运动模拟，2026-10-31按本课核心目标验收通过**。
-- **当前交接：Lesson16通过；Lesson17–18“一个有响应、可诊断的图形窗口”已讲解，学生程序待实现。已核验本机GLFW/GLEW开发环境，并由Agent临时隐藏窗口实测OpenGL3.3 Core可用；可见交互尚未验收**。
-- **下一步：学生在lessons/17_glfw_window/main.cpp亲写窗口程序，完成初始化与诊断、当前上下文与函数加载、循环清屏/交换缓冲/事件处理、ESC关闭、缩放时更新像素视口和资源清理；以一个可见程序整体Review**。
+- **最近完成：Lesson17–18 — 一个有响应、可诊断的图形窗口，2026-11-04验收通过**。
+- **当前交接：学生已修正初始视口回调名，原源码编译无警告；Agent隔离Xvfb实测画面、缩放视口及ESC退出通过。Lesson19–20“从顶点数据到第一个三角形”已讲解，综合程序待实现**。
+- **下一步：学生在lessons/19_first_triangle/复用Lesson17窗口，亲写并检查GLSL 330 Core两个Shader的编译与链接，创建VAO/VBO并绘制三角形；在一个程序内完成画面与诊断，提交Review**。
 - 用户已授权：代码 Review 或课程验收完成后，Agent 自动更新本文件，无需再次确认；仅记录实际学习与验证结果，保留历史日志。
 - 用户最明确的长期目标：自己编写 shader → 高质量复杂 shader → 完整可维护的游戏引擎。
 - 教学语言：中文；基础语法详细解释；少量片段，不给整份可复制答案。
@@ -33,8 +33,9 @@
 | **14 多文件项目与CMake** | **通过** | 四个小节及CMake三题通过；学生独立配置两个目标及链接依赖，Agent实际构建/运行、增量与缺链接对照均符合预期；实验目的与笔记包含形式已补充反馈 |
 | **15 让二维运动模块的错误可定位** | **通过** | GDB与错误定位此前通过；学生亲写nearlyEqual和长度平方断言，Agent临时验证旧错误被捕获、恢复后通过；完整四组实验改为可选，源码保留故障实验状态须在复用前恢复 |
 | **16 多个物体的二维运动模拟** | **通过（本课核心目标与已测整步配置）** | 总模拟时长驱动vΔt批量更新，4秒/0.5及0.25秒终点一致、独立对象通过；最后不足一步时间未处理，保留明确限制 |
-| 17–18 一个有响应、可诊断的图形窗口 | 已讲解；综合程序待验收 | GLFW3.3.6、GLEW2.2.0已安装，Agent临时OpenGL3.3 Core隐藏窗口验证通过；学生实现与可见交互待验收 |
-| 19 及以后 | 未开始 | 详见 LEARNING_PLAN.md |
+| **17–18 一个有响应、可诊断的图形窗口** | **通过** | 学生已修正调用名，原文件无警告构建；Agent隔离Xvfb验证背景色、缩放回调和ESC正常退出；CMake不在验收范围 |
+| 19–20 从顶点数据到第一个三角形 | 已讲解；综合程序待验收 | 在已有窗口中结合Shader编译/链接诊断、GLSL 330 Core、VAO/VBO与draw调用；一个项目完成学习 |
+| 21 及以后 | 未开始 | 详见 LEARNING_PLAN.md |
 
 ## 2. Lesson 09 验收清单（已完成）
 
@@ -156,9 +157,18 @@
 
 - [x] 整体主题已讲解：GLFW管理窗口/输入/上下文，OpenGL提供图形API，GLEW负责加载函数入口；上下文保存状态并关联绘制资源，创建后须设为当前再加载函数和绘制。
 - [x] 必要API已介绍：初始化与窗口创建的返回值/失败诊断、3.3 Core配置、GLEW初始化检查、关闭标志和ESC查询、事件处理、清屏与双缓冲、帧缓冲像素尺寸和回调、资源清理；给流程与局部调用，不代写完整main。
-- [ ] 学生创建lessons/17_glfw_window/main.cpp，一个程序显示800x600纯色窗口，可持续刷新、缩放、按ESC或关闭按钮退出；初次设置视口，尺寸回调使用帧缓冲像素尺寸更新视口。
-- [ ] 程序包含GLFW错误回调，检查glfwInit、glfwCreateWindow与glewInit失败；退出路径清理已创建资源。提供g++ C++17警告选项及-lglfw -lGLEW -lGL链接命令，不把重新练CMake作为本课前置。
-- [ ] 完整读取学生程序后构建/运行Review；区分Agent隐藏窗口环境验证与学生实际可见画面、按键和缩放交互，不要求额外独立小实验。
+- [x] 学生已创建lessons/17_glfw_window/main.cpp：采用600x600窗口、GLFW错误回调、Core 3.3请求、当前上下文与GLEW检查、像素视口回调、事件循环/ESC和清理；尺寸选择符合主题，无需改成原建议的800x600。
+- [x] 学生已修复原程序callback未声明：当前第63行调用onFramebufferSize；原文件实际以g++ -std=c++17 -Wall -Wextra -pedantic及-lglfw -lGLEW -lGL构建成功且无警告。
+- [x] Agent临时验证：仅在副本修正该调用，g++ C++17警告选项构建无诊断；隔离Xvfb中捕获600x600背景中心RGB(128,46,64)，缩放后视口日志为420x360，模拟ESC后退出码0。未声称原文件或学生已完成这些运行；窗口管理器关闭按钮及实际桌面交互未在本轮测试。
+- [x] 原源码复核：隔离Xvfb中捕获600x600画面中心RGB=(128,46,64)，模拟缩放后视口输出420x360，发送ESC后进程正常退出0。用户明确暂不检查CMake，未将其作为验收门槛；窗口管理器关闭按钮和初始化失败分支未实测。
+- [x] Lesson17–18整体按用户要求及实际代码、构建和交互证据通过；不另设重复小测。
+
+### Lesson 19–20 任务清单
+
+- [x] 已讲完整数据链：CPU顶点数据→VBO→VAO属性布局→Vertex Shader的gl_Position→图元装配与光栅化→Fragment Shader输出颜色→帧缓冲；解释GLSL 330 Core和旧glslViewer语法边界、NDC与像素差异。
+- [x] 已介绍Shader对象创建/源代码/编译/状态与日志、Program附加/链接/状态与日志，VAO/VBO绑定及字节布局、glDrawArrays和对应资源清理；通过接口和小片段引导，未代写完整程序。
+- [ ] 学生在lessons/19_first_triangle/复用已验收窗口程序，自行实现简单GLSL 330 Core顶点及片段Shader的编译、链接与失败诊断；使用一个位置VBO及VAO绘制可见纯色三角形，退出前清理资源。
+- [ ] 用一个程序验收：运行显示三角形与背景、缩放及ESC仍正常；Shader故障日志与编译/链接失败处理由学生代码提供，必要时Agent用临时副本验证，不额外要求学生完成多份小实验。CMake继续按用户偏好暂不验收。
 
 ## 3. 上一次对话留下的关键提醒
 
@@ -975,3 +985,26 @@ tree -L 3 lessons 2>/dev/null
 - 画面与交互：glClearColor保存RGBA清除值，glClear(GL_COLOR_BUFFER_BIT)执行颜色清除；双缓冲中准备后台图像再交换显示，swap interval=1请求垂直同步而非保证固定帧率。glfwPollEvents处理事件，ESC查询后设关闭标志，主循环退出再清理；回调注册传函数而非立即调用。
 - 尺寸与兼容：区分窗口逻辑尺寸和帧缓冲像素尺寸，glfwGetFramebufferSize输出参数及帧缓冲尺寸回调为视口提供宽高；glViewport用于后续图元的坐标映射，不能把缩放后的清屏颜色保持正确当作视口映射已验收。进入3.3 Core后，后续Shader采用现代语法，早期glslViewer的gl_FragColor需在Shader主题迁移。
 - 学生任务与下一步：自行创建17_glfw_window/main.cpp，显示800x600纯色窗口，持续刷新、响应缩放、ESC/关闭按钮退出、初始化失败有诊断并完成清理；给函数契约、流程与局部片段，由学生组合核心程序。一个程序整体Review通过后再进入19–20 Shader/顶点数据/三角形；本轮未创建完整答案、未暂存/提交/push。
+
+### 2026-11-03 — Lesson17–18初版Review：待修正回调调用名
+- 状态：窗口程序整体流程已写出、初版Review基本完成；原源码编译失败，按学生“语法无误”验收要求，整课暂未通过。用户明确CMake暂不检查，本轮未读取或构建CMakeLists。
+- 工作区及源码：开课前git status --short为空；完整读取lessons/17_glfw_window/main.cpp。错误回调先注册、检查glfwInit及窗口创建、请求OpenGL 3.3 Core、设置当前上下文后初始化并检查GLEW，退出与失败分支包含对应清理；设置初始帧缓冲尺寸及注册回调、设置背景色、事件循环处理ESC、清屏及交换缓冲。窗口600x600是合理选择，不要求改为最初示例尺寸800x600。
+- 原文件构建实测：将main.cpp原样快照复制到临时目录，执行g++ -std=c++17 -Wall -Wextra -pedantic main.cpp -o window_demo -lglfw -lGLEW -lGL，退出1；编译器在第58行报告callback was not declared in this scope。已定义的函数是第12行onFramebufferSize；第59行也用该名称注册。
+- 最小定位：第58行意图用已查询到的帧缓冲宽高先设置初始视口，应调用已有函数名onFramebufferSize。callback不是内置关键字或自动创建的回调变量；注册回调也不会自动声明callback。由学生自行修改原源码，不提供整份答案。
+- Agent临时对照：仅在临时快照将第58行callback调用名改为onFramebufferSize，使用相同编译及链接选项成功，无警告。隔离Xvfb运行该临时程序，找到名为GameEngineLab的可见窗口，截图为600x600，中心RGB=(128,46,64)，符合glClearColor(0.50,0.18,0.25,1.0)；模拟调整窗口至420x360，程序输出初始600x600与更新后的420x360视口；通过XTest向隔离窗口发送ESC，程序退出码0，stderr为空。
+- 验证边界：以上窗口/截图/缩放/ESC均由Agent对临时修正版执行，不是原文件或学生已实际操作的证据；未测试桌面窗口管理器关闭按钮或初始化失败分支，后者仅静态检查。快照前后原学生源码字节一致，临时目录自动清理；未改练习源码或CMake，未执行git暂存、提交、pull或push。
+- 下一步：学生自行修改该处函数名并重新提交，复核已保存源码及编译运行；已通过的整体流程无需重复新作业。之后按实际证据完成Lesson17–18验收，再进入Shader与三角形主题。
+
+### 2026-11-04 — Lesson17–18原文件复核通过，Lesson19–20三角形主题开课
+- 状态：Lesson17–18窗口主题按用户要求及代码/实际运行证据通过；Lesson19–20整体数据链与API已讲解，学生程序和Shader尚未提交，未通过。CMake继续不检查。
+- 核验：重读AGENTS、进度、Skill、教学与记录手册及图形阶段计划；开课前仅本进度文件已有未提交修改，保留；完整读取17_glfw_window/main.cpp。学生已将初始视口调用改为onFramebufferSize，第63行正确；新增按头文件版本在GLFW3.4及以上请求X11的条件编译。本机g++预处理确认GLFW头版本3.3.6，故本轮该条件分支未编译运行；GLEW为2.2.0。
+- 原文件实际构建：读取main.cpp字节快照到唯一临时目录，以g++ -std=c++17 -Wall -Wextra -pedantic <main.cpp> -o <demo> -lglfw -lGLEW -lGL构建，退出0、无诊断；与学生原源码内容相同，未改学生文件。
+- Agent实际运行：在隔离Xvfb中启动原文件构建程序，捕获600x600窗口中心RGB=(128,46,64)，符合glClearColor；X11触发缩放至420x360，程序输出600x600和420x360视口；向隔离窗口注入ESC后退出0，stderr为空。运行时报告Mesa OpenGL 4.5 Core，是该隔离环境返回的上下文版本；学生真实桌面版本不据此推断。原源码前后逐字节一致，临时目录清理。
+- 验收边界：学生窗口程序本身完整且已实际构建、显示、缩放与ESC测试，整课按既有目标通过；窗口管理器关闭按钮、GLFW3.4 X11条件分支和失败路径本轮未实测，不将其记成实测。CMake未读取/构建，也没有假称学生亲自运行本次Agent验证。
+- Lesson19–20目标：在原窗口里显示一个三角形，以一个可运行程序贯穿CPU顶点数据、VBO/VAO、Vertex Shader、图元装配与光栅化、Fragment Shader、颜色缓冲；后续Lesson21再以uniform接回运动模型。
+- 新课内容：GLSL #version 330 core、layout(location=0) in vec3位置、gl_Position=vec4(position,1.0)和显式fragment out vec4；glslViewer旧式gl_FragColor不直接迁入Core。w=1时示例clip坐标除以w得到NDC，(-1,-1)到(1,1)为视口边界，像素尺寸来自视口；缩放比例可能改变图形外观。
+- Shader与接口：介绍glCreateShader、glShaderSource的源字符串数组/数量/可选长度、glCompileShader及GL_COMPILE_STATUS和日志；glCreateProgram、attach、link及GL_LINK_STATUS和日志；编译链接分别检查并失败清理。GLSL是运行时由驱动编译，与C++编译器编译main发生在不同阶段。
+- 顶点接口：VBO分配/上传数据，VAO保存读取布局及属性关联；先绑定VAO与VBO、为location 0配置3个GL_FLOAT及字节步长和零偏移并启用，渲染循环中使用program/VAO并glDrawArrays(GL_TRIANGLES,0,3)，交换缓冲；shader对象链接成功后删除，循环结束后删除program/VBO/VAO再销毁窗口。
+- 验证与任务：学生自行创建lessons/19_first_triangle/main.cpp，可用原始字符串保存简单Shader；为顶点/片段编译和链接写失败日志，手写GPU数据设置与绘制。一个程序显示有色三角形，保留缩放与ESC；适合时Agent在临时副本验证故意Shader错误日志，不另向学生布置碎片实验。初始位置示例与预期画面为教师推导，尚未执行新课代码。
+- 官方资料：查阅Khronos OpenGL-Refpages官方glShaderSource、glCompileShader、glGetShaderiv、glLinkProgram、glGenVertexArrays、glBufferData、glVertexAttribPointer、glDrawArrays源码规范；GLFW Wiki本轮访问403，不以其不可用内容作为依据。
+- 下一步：学生完成同一程序后进行Review；仍无需检查CMake。提醒学生自行检查并提交已通过窗口课程的代码和进度；跨设备前push。未改学生源码、未暂存/提交/推送。
