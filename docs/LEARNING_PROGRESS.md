@@ -1,14 +1,14 @@
 # GameEngineLab 学习进度与交接日志
 
-> 最后整理：2026-11-04；此文件应随着课程持续更新。
+> 最后整理：2026-11-06；此文件应随着课程持续更新。
 > **状态约定**：`通过` / `已讲解` / `练习中` / `待Review` / `需复习` / `未开始`。  
 > 若实际仓库文件或用户最新说明与此表矛盾，以最新事实为准并更新。**严禁根据旧记忆冒充新进度**。
 
 ## 1. 当前状态
 
 - **最近完成：Lesson17–18 — 一个有响应、可诊断的图形窗口，2026-11-04验收通过**。
-- **当前交接：学生已修正初始视口回调名，原源码编译无警告；Agent隔离Xvfb实测画面、缩放视口及ESC退出通过。Lesson19–20“从顶点数据到第一个三角形”已讲解，综合程序待实现**。
-- **下一步：学生在lessons/19_first_triangle/复用Lesson17窗口，亲写并检查GLSL 330 Core两个Shader的编译与链接，创建VAO/VBO并绘制三角形；在一个程序内完成画面与诊断，提交Review**。
+- **当前交接：Lesson19–20已实现三角形并通过画面核心验证；初版Review为基本通过、整课尚未通过：视口固定600x600，Shader编译/链接失败后仍绘制且链接错误标签误写。Lesson21应用户要求已讲解，实践待完成**。
+- **下一步：学生修复Lesson19–20视口与Shader失败退出/清理、链接错误标签，再复核整课；可同步在Lesson21综合项目中复用修正后的窗口、Body和圆形Shader，让一个圆随真实时间运动**。
 - 用户已授权：代码 Review 或课程验收完成后，Agent 自动更新本文件，无需再次确认；仅记录实际学习与验证结果，保留历史日志。
 - 用户最明确的长期目标：自己编写 shader → 高质量复杂 shader → 完整可维护的游戏引擎。
 - 教学语言：中文；基础语法详细解释；少量片段，不给整份可复制答案。
@@ -34,8 +34,9 @@
 | **15 让二维运动模块的错误可定位** | **通过** | GDB与错误定位此前通过；学生亲写nearlyEqual和长度平方断言，Agent临时验证旧错误被捕获、恢复后通过；完整四组实验改为可选，源码保留故障实验状态须在复用前恢复 |
 | **16 多个物体的二维运动模拟** | **通过（本课核心目标与已测整步配置）** | 总模拟时长驱动vΔt批量更新，4秒/0.5及0.25秒终点一致、独立对象通过；最后不足一步时间未处理，保留明确限制 |
 | **17–18 一个有响应、可诊断的图形窗口** | **通过** | 学生已修正调用名，原文件无警告构建；Agent隔离Xvfb验证背景色、缩放回调和ESC正常退出；CMake不在验收范围 |
-| 19–20 从顶点数据到第一个三角形 | 已讲解；综合程序待验收 | 在已有窗口中结合Shader编译/链接诊断、GLSL 330 Core、VAO/VBO与draw调用；一个项目完成学习 |
-| 21 及以后 | 未开始 | 详见 LEARNING_PLAN.md |
+| 19–20 从顶点数据到第一个三角形 | 基本通过；整课待修复 | 三角形实际显示、ESC通过；固定视口影响缩放，故障时仍进入绘制且链接诊断误标；需修复后复核 |
+| 21 把运动模型呈现在自己的窗口 | 已讲解；实践待完成 | 应学生请求并行介绍uniform、真实时间步长、屏幕坐标及圆形Shader；保留19–20未通过状态 |
+| 22 及以后 | 未开始 | 详见 LEARNING_PLAN.md |
 
 ## 2. Lesson 09 验收清单（已完成）
 
@@ -167,8 +168,17 @@
 
 - [x] 已讲完整数据链：CPU顶点数据→VBO→VAO属性布局→Vertex Shader的gl_Position→图元装配与光栅化→Fragment Shader输出颜色→帧缓冲；解释GLSL 330 Core和旧glslViewer语法边界、NDC与像素差异。
 - [x] 已介绍Shader对象创建/源代码/编译/状态与日志、Program附加/链接/状态与日志，VAO/VBO绑定及字节布局、glDrawArrays和对应资源清理；通过接口和小片段引导，未代写完整程序。
-- [ ] 学生在lessons/19_first_triangle/复用已验收窗口程序，自行实现简单GLSL 330 Core顶点及片段Shader的编译、链接与失败诊断；使用一个位置VBO及VAO绘制可见纯色三角形，退出前清理资源。
-- [ ] 用一个程序验收：运行显示三角形与背景、缩放及ESC仍正常；Shader故障日志与编译/链接失败处理由学生代码提供，必要时Agent用临时副本验证，不额外要求学生完成多份小实验。CMake继续按用户偏好暂不验收。
+- [x] 学生已实现GLSL 330 Core顶点/片段Shader、VBO/VAO、draw调用与正常退出资源清理；Agent实际编译运行，捕获三角形与背景，ESC退出0。原文件编译有两个未使用回调宽高的警告。
+- [ ] 修复main.cpp:10：视口使用帧缓冲回调实际width/height；隔离Xvfb实际缩放420x360后程序仍报告600x600，影响后续图元与坐标映射。修正后可消除对应两个编译警告。
+- [ ] 修复Shader编译失败及Program链接失败的控制流：错误后释放已创建资源并以非零状态退出，不使用未成功链接的program绘制；main.cpp:213链接失败的日志标签应表明Program Link。Agent临时注入顶点错误和阶段接口类型不一致，实际观察到日志后仍进入窗口循环，并在ESC后退出0。
+- [x] Agent验证正常截图、ESC及临时故障注入，学生无须另建碎片实验。CMake继续按用户偏好未验收；上述修复后复核，不重做已通过的顶点/Shader基础功能。
+
+### Lesson 21 任务清单
+
+- [x] 应学生“验收，然后下一节”请求，讲解CPU运动数据→每帧deltaTime→uniform传输→Fragment Shader绘制圆的完整数据流；19–20保留未通过状态。
+- [x] 已讲glfwGetTime秒数与真实帧间隔、glGetUniformLocation及glUseProgram/glUniform2f顺序、活跃uniform的-1语义、帧缓冲像素与世界坐标映射，以及旧gl_FragColor迁移到GLSL 330显式输出。
+- [ ] 学生修复并复核19–20后，在lessons/21_moving_circle/基于既有三角形窗口和Body结构构造一个随时间移动的圆；屏幕覆盖三角形、分辨率和位置uniform、圆形距离着色、缩放及ESC组成一个完整程序；截图/实际运行与代码Review后验收。
+- [ ] 教师复用前需注意：当前16_motion_simulation/vec2.cpp已被学生修改，尾步return在单个Body循环内部；4.33秒、0.3秒时第一个物体推进4.33秒，后续物体仅4.2秒。历史Lesson16通过状态不撤销；Lesson21采用逐帧单步更新，避免依赖该尾步循环；学生可按需整理。
 
 ## 3. 上一次对话留下的关键提醒
 
@@ -1008,3 +1018,15 @@ tree -L 3 lessons 2>/dev/null
 - 验证与任务：学生自行创建lessons/19_first_triangle/main.cpp，可用原始字符串保存简单Shader；为顶点/片段编译和链接写失败日志，手写GPU数据设置与绘制。一个程序显示有色三角形，保留缩放与ESC；适合时Agent在临时副本验证故意Shader错误日志，不另向学生布置碎片实验。初始位置示例与预期画面为教师推导，尚未执行新课代码。
 - 官方资料：查阅Khronos OpenGL-Refpages官方glShaderSource、glCompileShader、glGetShaderiv、glLinkProgram、glGenVertexArrays、glBufferData、glVertexAttribPointer、glDrawArrays源码规范；GLFW Wiki本轮访问403，不以其不可用内容作为依据。
 - 下一步：学生完成同一程序后进行Review；仍无需检查CMake。提醒学生自行检查并提交已通过窗口课程的代码和进度；跨设备前push。未改学生源码、未暂存/提交/推送。
+
+### 2026-11-06 — Lesson19–20三角形Review及Lesson21运动画面讲解
+- 状态：19–20基本通过，整课暂未通过：需要修复固定视口及Shader失败后继续运行、链接错误标签；应学生请求同时讲解21，实践尚未完成，不把新课讲解当成学生已掌握或将未完成的19–20标记通过。
+- 工作区与完整阅读：开课前仅lessons/19_first_triangle/main.cpp已有未提交修改，保留；完整读取该文件、Lesson16三文件及05/06既有片段Shader，遵照此前用户偏好不读取或检查CMake。main.cpp当前未提交差异是回调由width/height改为固定600x600；不替学生恢复或覆盖。
+- 正确部分：学生独立设置三顶点和VBO上传、VAO的location 0和3float步幅、GLSL 330 Core顶点/片段Shader、编译/链接状态与info log查询、正常路径Shader/Program/VBO/VAO释放，窗口循环绑定Program/VAO并绘制，ESC退出。原源码g++ -std=c++17 -Wall -Wextra -pedantic -lglfw -lGLEW -lGL构建成功，width/height各一个未使用警告。
+- Agent实测：原文件字节快照在唯一临时目录构建，于独立Xvfb窗口截图600x600，中心RGB=(255,128,51)、左上背景RGB=(230,64,168)，分别对应学生的三角形与背景；模拟缩放至420x360后程序日志仍为600x600，发送ESC退出0、stderr为空。原源码前后逐字节一致，学生未提交代码保留。
+- Agent故障变式：仅在临时Shader源码中令顶点引用undefined_position，构建成功，运行实际输出Vertex Shader Compile Failed及link错误，但仍进入窗口循环、显示背景，ESC后退出0。另将顶点out vec3与片段in vec4同名变量设为活动状态，两个阶段编译而链接失败；输出误标Fragment Shader Compile Failed，仍进入绘制循环并在ESC后退出0。临时文件自动清理，不冒充学生亲做。修复提示：错误后清理已创建Shader/Program/VAO/VBO、窗口及GLFW，非零退出；使用准确的Program Link标签。
+- Lesson16现状核验：当前vec2.cpp尾步分支已不同于上次验收版本，其return在for(Body&)内部；运行当前学生文件的4.33秒/0.3秒配置，A=(8.66,4.33)，B=(5.8,0.1)，B对应4.2秒而目标应为(5.67,0.165)。本次仅记录新发现，Lesson16历史验收不撤销；Lesson21设计成真实帧间隔的单步更新，避免依赖此带尾步处理的多步函数。
+- Lesson21大局观：CPU用glfwGetTime差值计算秒为单位的deltaTime，用已有Body位置与速度执行一次p+=v*dt；CPU把画面尺寸和位置通过uniform设置到成功链接且当前使用的Program，Fragment Shader使用gl_FragCoord计算到圆心的距离与平滑边界，颜色写到显式out。画面只画一个随时间移动的圆，保留响应窗口和ESC；不强制提前完成碰撞或物理系统。
+- 圆形覆盖及坐标：复用VBO/VAO画覆盖视口的大三角形(-1,-1)/(3,-1)/(-1,3)，w=1且经过裁剪可覆盖可视区域。采样位置gl_FragCoord按左下原点、帧缓冲像素；定义p=(2*fragCoord.xy-resolution)/resolution.y，中心为(0,0)，x向右y向上，纵向范围约-1到1，横向范围约±宽高比。Body位置、速度、圆半径统一使用此空间，速度单位为单位/秒；分母高度为0时跳过绘制以免除零。u_resolution由glfwGetFramebufferSize取得实际像素并随缩放更新，不是GLSL自动提供。
+- Uniform契约：成功链接后glGetUniformLocation(program,"name")返回GLint位置，-1表示不存在或非活跃，需排查拼写、优化或错误Program；位置属于该次链接的Program。glUseProgram后glUniform2f(location,x,y)写入匹配的vec2，绘制前更新位置与分辨率；glUniform1f设置半径。glfwGetTime返回double秒；先保存上一帧时间，每帧读取now、差值dt并更新previous，避免用累计时间当步长；这是可变步长的匀速展示，未来碰撞/物理可再学固定步长。
+- 验收/下一步：学生先修复19–20视口、失败控制流及日志；并可在lessons/21_moving_circle/基于修正后的程序亲写一个移动圆，作为整体实践提交；验证画面、运动、缩放、颜色及ESC，必要时教师在临时副本检查故障处理。课程进度仅记录本次实际证据与讲解；未改学生源码，未暂存/提交/push。

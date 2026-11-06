@@ -67,7 +67,9 @@ int main() {
     float vertices[] = {
         -0.5f, -0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f
+        0.0f, 0.5f, 0.0f,
+        0.6f, 0.2f, 0.0f,
+        -0.4f, 0.5f, 0.0f
     }; // 定义顶点，包含9个浮点数，每3个浮点数组成一个顶点，对应xyz
     // vertices是C++数组，目前在CPU侧
 
@@ -192,11 +194,9 @@ int main() {
     }
 
     // 链接shader program
-    GLuint program = glCreateProgram();
-
-    glAttachShader(program, vertexShader);
+    GLuint program = glCreateProgram(); // Shader -> Shader Program对象，才可以工作
+    glAttachShader(program, vertexShader); // 把Shader附加到Program
     glAttachShader(program, fragmentShader);
-
     glLinkProgram(program);
     GLint success_program = 0;
     glGetProgramiv(program, GL_LINK_STATUS, &success_program); // 检查链接结果
@@ -210,7 +210,7 @@ int main() {
             infoLog
         );
 
-        std::cerr << "Fragment Shader Compile Failed: " << infoLog << '\n';
+        std::cerr << "Shader Program Compile Failed: " << infoLog << '\n';
     }
 
     glDeleteShader(vertexShader);
